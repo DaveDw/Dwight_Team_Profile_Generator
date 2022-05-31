@@ -1,20 +1,25 @@
 const inquirer = require('inquirer');
+const Manager = require('./lib/manager');
+const Engineer = require('./lib/engineer');
+const Intern = require('./lib/intern');
 const fs = require('fs');
+console.log("here");
 
-function gatherEmployees() {
 var another = true;
 var idCount = 0;
+var employees = [];
 
+
+function gatherEmployees() {
     while (another) {
-        idCount++;
-
+        another = !another;
         const promptUser = () => {
             return inquirer.prompt([
                 {
                     type: "list",
                     name: "paygrade",
                     message: "What paygrade is the employee?",
-                    choices: ["Manager", "Emgineer", "Intern"],
+                    choices: ["Manager", "Emgineer", "Intern"]
 
                 },
                 {
@@ -50,25 +55,50 @@ var idCount = 0;
                     type: "input",
                     name: "email",
                     message: "What's their email?"
+                },
+                {
+                    type: "list",
+                    name: "more",
+                    message: "Will there be another employee? ",
+                    choices: ["yes", "no"]
                 }
+
             ]);
-        };
-
-        if (paygrade === "Manager") {
-            const mikey = new Manager(id, employee, email, officeNum);
         }
-        const makeObj = ({employee, paygrade, email}) => {
+        promptUser()
+            .then((answers) => {
+                idCount++;
+                console.log("end");
+                if (answers.paygrade === "Manager") {
+                    employees.push(new Manager(idCount, answers.employee, answers.email, answers.officeNum));
+                } else if (paygrade === "Engineer") {
+                    employees.push(new Engineer(idCount, answers.employee, answers.email, answers.gitHub));
+                } else if (paygrade === "Intern") {
+                    employees.push(new Intern(idCount, answers.employee, answers.email, answers.school));
+                }
 
-        }
+                console.log("puppies");
 
-        // const promptUser2 = () => {
-        //     return inquirer.prompt([
-        //         {
-        //             type: "list",
-        //             name: "again",
-        //             message: "another employee?"
-        //         }
-        //     ]);
-        // };
+                if (answers.more === "no") {
+                    another = !another;
+
+                }
+
+                for (var i = 0; i < employees.length; i++) {
+                    console.log("id: " + employees[i].getID() + " Name: " + employees[i].getName());
+                }
+            });
+
     }
+
 }
+
+
+
+
+const init = () => {
+    gatherEmployees();
+
+}
+
+init();
